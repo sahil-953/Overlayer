@@ -17,13 +17,14 @@ const MapComponent = () => {
     const raster = new TileLayer({
       source: new OSM(),
     });
-
+// Create layers and source
     const source = new VectorSource({ wrapX: false });
 
     const vector = new VectorLayer({
       source: source,
     });
 
+    // Variables for drawing interactions
     let sketch;
     let helpTooltip;
     let measureTooltipElement;
@@ -56,7 +57,7 @@ const MapComponent = () => {
           }
         }
       };
-      
+        // Create the map
     const map = new Map({
       layers: [raster, vector],
       target: mapRef.current,
@@ -66,13 +67,13 @@ const MapComponent = () => {
       }),
     });
     map.on('pointermove', pointerMoveHandler);
-
+// Event listener to hide help tooltip when mouse leaves the map
     map.getViewport().addEventListener('mouseout', function () {
       if (helpTooltipElement) {
         helpTooltipElement.classList.add('hidden');
       }
     });
-
+    // Function to format length of line
     const typeSelect = document.getElementById('type');
     let draw;   
     const formatLength = function (line) {
@@ -85,6 +86,8 @@ const MapComponent = () => {
         }
         return output;
       };
+      
+    // Function to format area of polygon
       const formatArea = function (polygon) {
         const area = getArea(polygon);
         let output;
@@ -95,6 +98,8 @@ const MapComponent = () => {
         }
         return output;
       };
+      
+    // Style for drawing features
       const style = new Style({
         fill: new Fill({
           color: 'rgba(255, 255, 255, 0.2)',
@@ -114,7 +119,7 @@ const MapComponent = () => {
           }),
         }),
       });
-      
+      // Function to add interaction for drawing
     function addInteraction() {
       const value = typeSelect.value;
       if (value !== 'None') {
@@ -156,14 +161,15 @@ const MapComponent = () => {
         });
       }
     }
-
+ // Event listener for changing draw type
     typeSelect.onchange = function () {
       map.removeInteraction(drawRef.current);
       addInteraction();
     };
 
-    
+     // Add drawing interaction
     addInteraction();
+      // Function to create help tooltip
     function createHelpTooltip() {
         helpTooltipElement = document.createElement('div');
         helpTooltipElement.className = 'ol-tooltip hidden';
@@ -174,6 +180,7 @@ const MapComponent = () => {
         });
         map.addOverlay(helpTooltip);
       }
+       // Function to create measure tooltip
       function createMeasureTooltip() {
         measureTooltipElement = document.createElement('div');
         measureTooltipElement.className = 'ol-tooltip ol-tooltip-measure';
@@ -186,12 +193,13 @@ const MapComponent = () => {
         });
         map.addOverlay(measureTooltip);
       }
+       // Cleanup function to dispose map on component unmount
     return () => {
       map.dispose();
     };
   }, []);
 
-  
+    // JSX for rendering map component
   return (
     <div>
       <div ref={mapRef} style={{ width: '100%', height: '70vh' }} />
@@ -205,7 +213,7 @@ const MapComponent = () => {
         </select>
       </div>
     
-    </div>
+    </div>  
   );
 };
 
